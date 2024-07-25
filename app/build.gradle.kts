@@ -27,18 +27,21 @@ tasks.jar {
     enabled = false
 }
 
-tasks.jar {
-    archiveFileName.set("WhatsappWrapped.jar")
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-    archiveFileName.set("$buildDir/libs/WhatsappWrapped.jar")
-    manifest {
-        attributes["Main-Class"] = "whatsappwrapped.AppMain"
-    }
-}
+// Build proces disabled - use shadowjar
+
+// tasks.jar {
+//     archiveFileName.set("WhatsappWrapped.jar")
+//     duplicatesStrategy = DuplicatesStrategy.INCLUDE
+//     archiveFileName.set("$buildDir/libs/WhatsappWrapped.jar")
+//     manifest {
+//         attributes["Main-Class"] = "whatsappwrapped.AppMain"
+//     }
+// }
 
 tasks.shadowJar {
     mergeServiceFiles()
     archiveClassifier.set("all")
+    archiveFileName.set("WhatsappWrapped.jar")
 }
 
 tasks.build {
