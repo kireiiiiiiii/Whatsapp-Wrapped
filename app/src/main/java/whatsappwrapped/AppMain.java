@@ -28,7 +28,13 @@ package whatsappwrapped;
 
 import java.util.Scanner;
 import whatsappwrapped.Common.Chat;
+import whatsappwrapped.Constatns.Dialogue;
+import whatsappwrapped.Tools.AsciiArtUtil;
 
+/**
+ * Main class.
+ * 
+ */
 public class AppMain {
 
     /////////////////
@@ -36,8 +42,12 @@ public class AppMain {
     ////////////////
 
     public static void main(String[] args) {
+        AsciiArtUtil.printBoxedAsciiArt(Dialogue.ASCII_ART, 2, 2);
+        System.out.print("\n\n");
+
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter chat file path: ");
+        System.out.print(Dialogue.enterChatPath() + ": \n  > ");
+
         String path = scanner.nextLine();
         Chat chat = new Chat(path);
         chat.printStats();
@@ -45,4 +55,5 @@ public class AppMain {
         // chat.printRandom();
         scanner.close();
     }
+
 }
