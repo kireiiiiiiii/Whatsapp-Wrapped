@@ -24,6 +24,10 @@ java {
 }
 
 tasks.jar {
+    enabled = false
+}
+
+tasks.jar {
     archiveFileName.set("WhatsappWrapped.jar")
     duplicatesStrategy = DuplicatesStrategy.INCLUDE
     archiveFileName.set("$buildDir/libs/WhatsappWrapped.jar")
