@@ -1,7 +1,7 @@
 /*
  * Author: Matěj Šťastný
  * Date created: 5/20/2024
- * Github link: Not published
+ * Github link: https://github.com/kireiiiiiiii/Whatsapp-Wrapped
  *
  *
  *
