@@ -32,6 +32,8 @@ import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import whatsappwrapped.Common.Message;
+import whatsappwrapped.Enums.MessageType;
 
 /**
  * Class to read from and format a {@code .txt} WhatsApp message log file.
@@ -50,23 +52,34 @@ public class ChatLogUtil {
      * @param logFile - Target {@code File} object.
      * @return {@code ArrayList} containing the contents of the file.
      */
-    public static ArrayList<String> getMessageList(File logFile) {
-        ArrayList<String> messages = new ArrayList<String>();
+    public static ArrayList<Message> getMessageList(File logFile) {
+
+        ArrayList<Message> messages = new ArrayList<Message>();
+
         try {
             // Create the file reader.
             Scanner scanner = new Scanner(logFile);
-            for (int i = 0; scanner.hasNextLine(); i++) {
+            while (scanner.hasNextLine()) {
                 String line = scanner.nextLine();
-                if (!isMessageLog(line)) {
-                    i--;
-                    continue;
-                }
+
                 if (!isMessageStart(line)) {
-                    // Append message to last message element
-                    messages.set(i - 1, messages.get(i - 1) + "\n" + line);
-                    i--;
-                } else {
-                    messages.add(line);
+
+                    // Append on previous message
+                    String temporaryContent = messages.get(messages.size() - 1).getContents();
+                    messages.get(messages.size() - 1).setContents(temporaryContent + "\n" + line);
+
+                } else if (isMessageLog(line)) {
+
+                    messages.add(new Message(MessageUtil.getSender(line), MessageUtil.getContents(line),
+                            MessageUtil.getTime(line), MessageUtil.getDate(line), MessageType.REGULAR));
+
+                } else /* Is a system message */ {
+
+                    MessageType messageType = getSystemMessageType(line);
+                    if (messageType != MessageType.UNKNOWN) {
+                        // TODO: Add system message
+                    }
+
                 }
             }
             scanner.close();
@@ -78,7 +91,7 @@ public class ChatLogUtil {
     }
 
     /////////////////
-    // Filter methods
+    // Message type filters
     ////////////////
 
     /**
@@ -92,6 +105,52 @@ public class ChatLogUtil {
         // Regular expression to match the date and time format followed by " - "
         String dateTimePattern = "^\\d{1,2}/\\d{1,2}/\\d{2}, \\d{2}:\\d{2} - ";
         return line.matches(dateTimePattern + ".*");
+    }
+
+    /**
+     * Gets the {@code MessageType} of a system message from a message log.
+     * 
+     * @param systemMessageLog - message log {@code String}.
+     * @return enum value of {@code MessageType}.
+     */
+    public static MessageType getSystemMessageType(String systemMessageLog) {
+        MessageType systemMessageType;
+
+        if (isEncryptionMessage(systemMessageLog)) {
+            systemMessageType = MessageType.ENCRYPTION;
+        } else if (isBlockedContactMessage(systemMessageLog)) {
+            systemMessageType = MessageType.BLOCKED;
+        } else if (isUnblockMessage(systemMessageLog)) {
+            systemMessageType = MessageType.UNBLOCK;
+        } else if (isGroupCreationMessage(systemMessageLog)) {
+            systemMessageType = MessageType.GROUP_CREATION;
+        } else if (isUserAddedMessage(systemMessageLog)) {
+            systemMessageType = MessageType.USER_ADDED;
+        } else if (isChangedGroupDescriptionMessage(systemMessageLog)) {
+            systemMessageType = MessageType.DESCRIPTION_CHANGED;
+        } else if (isGroupJoinMessage(systemMessageLog)) {
+            systemMessageType = MessageType.USER_JOINED;
+        } else if (isSettingsChangeMessage(systemMessageLog)) {
+            systemMessageType = MessageType.SETTINS_CHANGED;
+        } else if (isGroupNameChangeMessage(systemMessageLog)) {
+            systemMessageType = MessageType.GROUP_NAME_CHANGE;
+        } else if (isGroupIconChangeMessage(systemMessageLog)) {
+            systemMessageType = MessageType.GROUP_ICON_CHANGE;
+        } else if (isGroupLeftMessage(systemMessageLog)) {
+            systemMessageType = MessageType.USER_LEFT;
+        } else if (isUserRemovedMessage(systemMessageLog)) {
+            systemMessageType = MessageType.USER_REMOVED;
+        } else if (isUserAddedUserMessage(systemMessageLog)) {
+            systemMessageType = MessageType.USER_ADDED_2;
+        } else if (isCallStartedMessage(systemMessageLog)) {
+            systemMessageType = MessageType.CALL_STARTED;
+        } else if (isVideoCallStartedMessage(systemMessageLog)) {
+            systemMessageType = MessageType.VIDEO_CALL_STARTED;
+        } else {
+            systemMessageType = MessageType.UNKNOWN;
+        }
+
+        return systemMessageType;
     }
 
     /**

@@ -33,6 +33,12 @@ package whatsappwrapped.Constatns;
 public class ASCIIColors {
 
     /////////////////
+    // Cobstants
+    ////////////////
+
+    public static final String COLOR_RESET = "\u001B[0m";
+
+    /////////////////
     // Class fields
     ////////////////
 

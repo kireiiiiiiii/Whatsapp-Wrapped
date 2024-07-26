@@ -26,6 +26,7 @@
 
 package whatsappwrapped.Common;
 
+import whatsappwrapped.Enums.MessageType;
 import whatsappwrapped.Tools.*;
 import java.io.File;
 import java.util.ArrayList;
@@ -44,6 +45,7 @@ public class Chat {
 
     private File chatFile;
     private ArrayList<Message> messages;
+    private ArrayList<Sender> registered;
 
     /////////////////
     // Constructors
@@ -52,12 +54,16 @@ public class Chat {
     /**
      * Default contructor.
      * 
-     * @param chat - {@code File} object of the chat file.
+     * @param chatLogFile - {@code File} object of the chat file.
      */
-    public Chat(File chat) {
-        this.chatFile = chat;
-        this.messages = new ArrayList<Message>();
-        refresh();
+    public Chat(File chatLogFile) {
+        if (!chatLogFile.exists()) {
+            System.out.println("ERROR - File doesn't exist");
+            System.exit(0);
+        }
+        this.chatFile = chatLogFile;
+        this.messages = ChatLogUtil.getMessageList(this.chatFile);
+        refreshUserList();
     }
 
     /**
@@ -68,10 +74,6 @@ public class Chat {
     public Chat(String path) {
         this(new File(path));
     }
-
-    /////////////////
-    // Accesor methods
-    ////////////////
 
     /////////////////
     // Modifier methods
@@ -96,103 +98,66 @@ public class Chat {
     }
 
     /////////////////
-    // Other public methods
+    // Print methods
     ////////////////
 
     /**
-     * Refreshes all the class fields.
+     * Prits the whole chat log.
      * 
      */
-    public void refresh() {
-        if (!hasValidSource()) {
-            System.out.println("Invalid source file");
-            System.exit(0);
-            return;
-        }
-
-        // Read the file
-        System.out.println("Loading chat log...");
-        ArrayList<String> fileContents = ChatLogUtil.getMessageList(this.chatFile);
-        if (fileContents == null) {
-            System.out.println("Couldn't read file");
-            return;
-        }
-
-        if (fileContents.size() > 0) {
-            if (fileContents.get(0).substring(17).equals(
-                    "Messages and calls are end-to-end encrypted. No one outside of this chat, not even WhatsApp, can read or listen to them. Tap to learn more.")) {
-                fileContents.remove(0);
-            }
-        }
-
-        // Format and add the messages
-        this.messages.clear();
-        for (String messageLog : fileContents) {
-            Message m = new Message(getSender(messageLog), getContents(messageLog), getTime(messageLog),
-                    getDate(messageLog));
-            this.messages.add(m);
-        }
-        SenderList.sortUsers();
-    }
-
     public void printChatLog() {
-        System.out.println("\nCHAT LOG: ");
+        System.out.println("\n-----------------------------------------------------");
+        System.out.println("CHAT LOG");
         System.out.println("-----------------------------------------------------\n");
-        for (Message m : this.messages) {
-
-            String color = "";
-            // find color
-            for (int i = 0; i < SenderList.registered.size(); i++) {
-                SenderList s = SenderList.registered.get(i);
-                if (m.sender.equals(s.getUsername())) {
-                    color = s.color;
-                }
-            }
-
-            String log = color + m.getDateSend() + " " + m.getTimeSend() + " - " + m.getSender() + " : "
-                    + m.getContents() + COLOR_RESET;
-            System.out.println(log);
+        for (int currMsgIndex = 0; currMsgIndex < this.messages.size(); currMsgIndex++) {
+            System.out.println(getMessagePrintString(currMsgIndex));
         }
-    }
-
-    public void printStats() {
-        System.out.println("\nLOG STATS: ");
-        System.out.println("-----------------------------------------------------\n");
-
-        System.out.println("Total messages: " + this.messages.size());
-        ArrayList<String> userMessageCount = new ArrayList<String>();
-        for (SenderList sl : SenderList.registered) {
-            userMessageCount.add(sl.color + "  > " + sl.getUsername() + ": " + sl.getMessagesSend() + COLOR_RESET);
-        }
-        System.out.println("\nIndividual:");
-        for (String s : userMessageCount) {
-            System.out.println(s);
-        }
-    }
-
-    public void printRandom() {
-        int random = (int) (Math.random() * this.messages.size());
-        Message m = this.messages.get(random);
-        String color = "";
-        // find color
-        for (int i = 0; i < SenderList.registered.size(); i++) {
-            SenderList s = SenderList.registered.get(i);
-            if (m.sender.equals(s.getUsername())) {
-                color = s.color;
-            }
-        }
-        String s = color + m.getDateSend() + " " + m.getTimeSend() + " - " + m.getSender() + " : " + m.getContents()
-                + COLOR_RESET;
-        System.out.println(s);
     }
 
     /**
-     * Checks if the file is a valit chat preset.
+     * Prints the statistics of the chat.
      * 
-     * @return {@code boolean} factor.
      */
-    public boolean hasValidSource() {
-        return this.chatFile.exists();
+    public void printStats() {
+        System.out.println("\n-----------------------------------------------------");
+        System.out.println("LOG STATS");
+        System.out.println("-----------------------------------------------------\n");
+
+        System.out.println("Total messages: " + this.messages.size() + "\n");
+
+        for (Sender s : this.registered) {
+            System.out.println("    > " + s.getColor() + s.getUsername() + ": " + s.getMessagesSend() + COLOR_RESET);
+        }
+
+    }
+
+    /**
+     * Prints a message block of given size starting at a random place in the chat
+     * log.
+     * </p>
+     * If the lenght given is the same of bigger than the lenght of the chat, the
+     * whole chat log will be printed.
+     * </p>
+     * If the lenght is 0 or smaller, nothing will be printed.
+     * 
+     * @param blockLenght
+     */
+    public void printRandomMessageBlock(int blockLenght) {
+        System.out.println("\n-----------------------------------------------------");
+        System.out.println(blockLenght + " RANDOM MESSAGES");
+        System.out.println("-----------------------------------------------------\n");
+
+        if (blockLenght >= this.messages.size()) {
+            printChatLog();
+        } else if (blockLenght < 1) {
+            return;
+        } else {
+            int max = this.messages.size() - blockLenght;
+            int random = (int) (Math.random() * max + 1);
+            for (int i = 0; i < blockLenght; i++) {
+                System.out.println("    " + getMessagePrintString(random + i));
+            }
+        }
     }
 
     /**
@@ -201,81 +166,81 @@ public class Chat {
      * @param messageLog - message log.
      */
     public void printDebugg(String messageLog) {
-        System.out.println("Time: " + getTime(messageLog));
-        System.out.println("Date: " + getDate(messageLog));
-        System.out.println("Sender: " + getSender(messageLog));
-        System.out.println("Contents: " + getContents(messageLog));
+        System.out.println("\n-----------------------------------------------------");
+        System.out.println("DEBUG");
+        System.out.println("-----------------------------------------------------\n");
+
+        System.out.println("Time: " + MessageUtil.getTime(messageLog));
+        System.out.println("Date: " + MessageUtil.getDate(messageLog));
+        System.out.println("Sender: " + MessageUtil.getSender(messageLog));
+        System.out.println("Contents: " + MessageUtil.getContents(messageLog));
     }
 
     /////////////////
     // Private methods
     ////////////////
 
-    private String getTime(String messageLog) {
-        int firstSlashIndex = messageLog.indexOf('/');
-        int secondSlashIndex = messageLog.indexOf('/', firstSlashIndex + 1);
-        int startIndex = messageLog.indexOf(',', secondSlashIndex) + 2;
-        return messageLog.substring(startIndex, startIndex + 5);
-    }
-
-    private String getDate(String messageLog) {
-        int endIndex = messageLog.indexOf(',');
-        return messageLog.substring(0, endIndex);
-    }
-
-    private String getSender(String messageLog) {
-        int startIndex = messageLog.indexOf(" - ") + 3;
-        int endIndex = messageLog.indexOf(":", startIndex);
-        assert (endIndex != -1) : "SenderFormatError - " + messageLog;
-        return messageLog.substring(startIndex, endIndex);
-    }
-
-    private String getContents(String messageLog) {
-        int startIndex = messageLog.indexOf(" - ") + 3;
-        startIndex = messageLog.indexOf(":", startIndex) + 2;
-        assert (startIndex != -1) : "ContentFormatError - " + messageLog;
-        return messageLog.substring(startIndex);
-    }
-
-    /////////////////
-    // Message class
-    ////////////////
-
-    private class Message {
-
-        /* CLASS VARIABLES */
-
-        private String sender;
-        private String contents;
-        private String timeSend;
-        private String dateSend;
-
-        /* CONTRUCTORS */
-
-        public Message(String sender, String contents, String timeSend, String dateSend) {
-            this.sender = sender;
-            this.contents = contents;
-            this.timeSend = timeSend;
-            this.dateSend = dateSend;
-            new SenderList(sender);
-        }
-
-        /* ACCESORS */
-
-        public String getSender() {
-            return this.sender;
-        }
-
-        public String getContents() {
-            return this.contents;
-        }
-
-        public String getTimeSend() {
-            return this.timeSend;
-        }
-
-        public String getDateSend() {
-            return this.dateSend;
+    /**
+     * Refreshes the registered user list using the message list.
+     * 
+     */
+    private void refreshUserList() {
+        this.registered = new ArrayList<Sender>();
+        for (Message message : this.messages) { // Goes through all the messages
+            if (message.getMessageType() == MessageType.REGULAR) { // Only do if the mesage is a user text message
+                String senderTag = message.getSender();
+                boolean foundUser = false;
+                for (Sender sender : this.registered) { // Searches though the list of registered users
+                    if (sender.getUsername().equals(senderTag)) {
+                        foundUser = true;
+                        sender.addMessageCount(1);
+                    }
+                }
+                if (!foundUser) {
+                    Sender newSender = new Sender(senderTag);
+                    newSender.addMessageCount(1);
+                    registered.add(newSender);
+                }
+            }
         }
     }
+
+    /**
+     * Gets the {@code String} of a message on the specific line, that can be
+     * printed into the console.
+     * 
+     * @param line - target line.
+     * @return - message {@code String}, or {@code null} if line out of bounds.
+     */
+    private String getMessagePrintString(int line) {
+        if (line > this.messages.size() - 1) {
+            return null;
+        }
+
+        Message message = this.messages.get(line);
+        Sender sender = getMessageSender(message);
+
+        String log = sender.getColor() + message.getDateSend() + " " + message.getTimeSend() + " - " +
+                message.getSender() + " : "
+                + message.getContents() + COLOR_RESET;
+
+        return log;
+    }
+
+    /**
+     * Gets the sender from the list of registered users for a {@code Message}
+     * object.
+     * 
+     * @param message - {@code Message} object.
+     * @return wanted {@code Sender} object or {@code null} if user not registered.
+     */
+    private Sender getMessageSender(Message message) {
+        for (Sender sender : this.registered) {
+            if (sender.getUsername().equals(message.getSender())) {
+                return sender;
+            }
+        }
+        return null;
+    }
+
 }

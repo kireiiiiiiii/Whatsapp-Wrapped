@@ -42,7 +42,8 @@ public class AppMain {
     ////////////////
 
     public static void main(String[] args) {
-        AsciiArtUtil.printBoxedAsciiArt(Dialogue.ASCII_ART, 2, 2);
+        System.out.println("\n");
+        AsciiArtUtil.printBoxedColoredAsciiArt(Dialogue.ASCII_ART, "\u001B[32m", 2, 2);
         System.out.print("\n\n");
 
         Scanner scanner = new Scanner(System.in);
@@ -50,9 +51,12 @@ public class AppMain {
 
         String path = scanner.nextLine();
         Chat chat = new Chat(path);
+
+        /* PRINT METHODS */ // TODO: User console
         chat.printStats();
         // chat.printChatLog();
-        // chat.printRandom();
+        chat.printRandomMessageBlock(10);
+
         scanner.close();
     }
 
