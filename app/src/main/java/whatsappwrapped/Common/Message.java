@@ -63,7 +63,6 @@ public class Message {
         this.timeSend = timeSend;
         this.dateSend = dateSend;
         this.messageType = messageType;
-        // TODO : Add to chat list, and check for new users.
     }
 
     /////////////////
