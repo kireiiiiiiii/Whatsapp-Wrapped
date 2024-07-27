@@ -52,9 +52,9 @@ public class AppMain {
         String path = scanner.nextLine();
         Chat chat = new Chat(path);
 
-        /* PRINT METHODS */ // TODO: User console
-        // chat.printStats();
-        // chat.printRandomMessageBlock(10);
+        /* PRINT METHODS */
+        chat.printStats();
+        chat.printRandomMessageBlock(10);
 
         scanner.close();
     }

@@ -26,8 +26,6 @@
 
 package whatsappwrapped.Constatns;
 
-import org.checkerframework.checker.guieffect.qual.SafeEffect;
-
 import whatsappwrapped.Enums.Language;
 
 public class Dialogue {
