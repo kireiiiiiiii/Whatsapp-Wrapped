@@ -26,6 +26,8 @@
 
 package whatsappwrapped.Constatns;
 
+import org.checkerframework.checker.guieffect.qual.SafeEffect;
+
 import whatsappwrapped.Enums.Language;
 
 public class Dialogue {
@@ -61,6 +63,171 @@ public class Dialogue {
         switch (currLanguage) {
             case ENGLISH:
                 return "Enter chat file path";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Chat log"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String chatLog() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Chat log";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Chat Information"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String chatInformation() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Chat information";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Random messages"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String randomMessages() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Random messages";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Debug"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String debugWord() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Debug";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Total messages"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String totalMessages() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Total messages";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Time"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String time() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Time";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Date"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String date() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Date";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Sender"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String sender() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Sender";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Content"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String contents() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Content";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "Error"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String error() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "Error";
+
+            default:
+                return "";
+        }
+    }
+
+    /**
+     * ENGLISH - "File doesn't exist"
+     * 
+     * @return {@code String} depending on the current language.
+     */
+    public static String fileDoesntExist() {
+        switch (currLanguage) {
+            case ENGLISH:
+                return "File doesn't exist";
 
             default:
                 return "";

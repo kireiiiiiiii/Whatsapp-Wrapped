@@ -26,6 +26,7 @@
 
 package whatsappwrapped.Common;
 
+import whatsappwrapped.Constatns.Dialogue;
 import whatsappwrapped.Enums.MessageType;
 import whatsappwrapped.Tools.*;
 import java.io.File;
@@ -58,7 +59,7 @@ public class Chat {
      */
     public Chat(File chatLogFile) {
         if (!chatLogFile.exists()) {
-            System.out.println("ERROR - File doesn't exist");
+            System.out.println(Dialogue.error().toUpperCase() + " - " + Dialogue.fileDoesntExist());
             System.exit(0);
         }
         this.chatFile = chatLogFile;
@@ -107,7 +108,7 @@ public class Chat {
      */
     public void printChatLog() {
         System.out.println("\n-----------------------------------------------------");
-        System.out.println("CHAT LOG");
+        System.out.println(Dialogue.chatLog().toUpperCase());
         System.out.println("-----------------------------------------------------\n");
         for (int currMsgIndex = 0; currMsgIndex < this.messages.size(); currMsgIndex++) {
             System.out.println(getMessagePrintString(currMsgIndex));
@@ -120,10 +121,10 @@ public class Chat {
      */
     public void printStats() {
         System.out.println("\n-----------------------------------------------------");
-        System.out.println("LOG STATS");
+        System.out.println(Dialogue.chatInformation().toUpperCase());
         System.out.println("-----------------------------------------------------\n");
 
-        System.out.println("Total messages: " + this.messages.size() + "\n");
+        System.out.println(Dialogue.totalMessages() + ": " + this.messages.size() + "\n");
 
         for (Sender s : this.registered) {
             System.out.println("    > " + s.getColor() + s.getUsername() + ": " + s.getMessagesSend() + COLOR_RESET);
@@ -144,7 +145,7 @@ public class Chat {
      */
     public void printRandomMessageBlock(int blockLenght) {
         System.out.println("\n-----------------------------------------------------");
-        System.out.println(blockLenght + " RANDOM MESSAGES");
+        System.out.println(blockLenght + " " + Dialogue.randomMessages().toUpperCase());
         System.out.println("-----------------------------------------------------\n");
 
         if (blockLenght >= this.messages.size()) {
@@ -167,13 +168,13 @@ public class Chat {
      */
     public void printDebugg(String messageLog) {
         System.out.println("\n-----------------------------------------------------");
-        System.out.println("DEBUG");
+        System.out.println(Dialogue.debugWord().toUpperCase());
         System.out.println("-----------------------------------------------------\n");
 
-        System.out.println("Time: " + MessageUtil.getTime(messageLog));
-        System.out.println("Date: " + MessageUtil.getDate(messageLog));
-        System.out.println("Sender: " + MessageUtil.getSender(messageLog));
-        System.out.println("Contents: " + MessageUtil.getContents(messageLog));
+        System.out.println(Dialogue.time() + ": " + MessageUtil.getTime(messageLog));
+        System.out.println(Dialogue.date() + ": " + MessageUtil.getDate(messageLog));
+        System.out.println(Dialogue.sender() + ": " + MessageUtil.getSender(messageLog));
+        System.out.println(Dialogue.contents() + ": " + MessageUtil.getContents(messageLog));
     }
 
     /////////////////

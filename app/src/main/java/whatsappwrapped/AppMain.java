@@ -53,9 +53,8 @@ public class AppMain {
         Chat chat = new Chat(path);
 
         /* PRINT METHODS */ // TODO: User console
-        chat.printStats();
-        // chat.printChatLog();
-        chat.printRandomMessageBlock(10);
+        // chat.printStats();
+        // chat.printRandomMessageBlock(10);
 
         scanner.close();
     }
