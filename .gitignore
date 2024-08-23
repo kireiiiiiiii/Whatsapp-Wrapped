@@ -50,3 +50,6 @@ $RECYCLE.BIN/
 
 # Symbolic Links
 *.lnk
+
+# Files specific for developers
+resources/ChatLog.txt
